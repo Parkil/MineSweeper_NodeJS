@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Node.js로 구현한 지뢰찾기</title>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="text/javascript">
+    var app;
+    $(document).ready(function() {
+        /*
+                특정 html DOM에 vue.js를 설정하여 data변경 이벤트 발생시 자동으로 DOM을 변경하게 하는건 가능하다 그런데 그럼 지뢰 찾기 cell마다 Vue객체를 생성해야 하는건가?
+        
+        */
+        app = new Vue({
+            el : '#tbody',
+            data : {
+                message : '-'
+            }
+        });
+    });
+    
+    function clickCell(rowIdx, colIdx) {
+        var param = {};
+        param.rowIdx = rowIdx;
+        param.colIdx = colIdx;
+        
+        $.ajax({
+            url : '/clickCell',
+            method : 'post',
+            dataType : 'json',
+            data : param
+        }).done(function(a) {
+            console.log('ajax done', a);
+            //코드에 따른 html 조작이 들어가야 하는데 이를 수동으로 하지 않고 여기서 event를 날리면 html이 event에 따라서 자동으로 변경되게 할수 없나?
+            /*
+            */
+        });
+    }
+</script>
+</head>
+<body>
+    <% var colPercentage = Math.round(100/colCnt); %>
+    <h1>List Page</h1>
+    <a href="javascript:insertView();">Insert User</a>
+    <a href="javascript:ajaxTest();">Ajax Test</a>
+    <form name="dummyForm" id="dummyForm"></form>
+    <table style="width:100%;" border="1">
+        <colgroup>
+            <%for(var i=0 ; i<colCnt ; i++) {%>
+                <col style="width:<%=colPercentage%>%"/>
+            <%}%>
+        </colgroup>
+        <tbody id="tbody">
+            <%for(var i=0 ; i<rowCnt ; i++) {%>
+                <tr>
+                    <%for(var j=0 ; j<colCnt ; j++) {%>
+                        <td data-row="<%=i%>" data-col="<%=j%>"><a href="javascript:clickCell('<%=i%>','<%=j%>')">{{message}}</a></td>
+                    <%}%>
+	            </tr>
+            <%}%>
+        </tbody>
+    </table>
+</body>
+</html>
